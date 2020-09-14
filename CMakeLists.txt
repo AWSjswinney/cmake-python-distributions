@@ -187,8 +187,8 @@ if(CMakePythonDistributions_SUPERBUILD)
         # Since CMAKE_C_FLAGS and CMAKE_EXE_LINKER_FLAGS arguments contain spaces, we generate an initial
         # cache file.
         file(WRITE "${CMAKE_BINARY_DIR}/initial-cache.txt"
-"set(CMAKE_C_FLAGS \"-D_POSIX_C_SOURCE=199506L -D_POSIX_SOURCE=1 -D_SVID_SOURCE=1 -D_BSD_SOURCE=1\" CACHE STRING \"Initial cache\" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS \"-static-libstdc++ -static-libgcc -lrt\" CACHE STRING \"Initial cache\" FORCE)
+"set(CMAKE_C_FLAGS \"-g3 -D_POSIX_C_SOURCE=199506L -D_POSIX_SOURCE=1 -D_SVID_SOURCE=1 -D_BSD_SOURCE=1\" CACHE STRING \"Initial cache\" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS \"-lstdc++ -lgcc -lrt\" CACHE STRING \"Initial cache\" FORCE)
 ")
         set(_common_args
           CMAKE_ARGS -C "${CMAKE_BINARY_DIR}/initial-cache.txt"
@@ -262,21 +262,6 @@ set(CMAKE_EXE_LINKER_FLAGS \"-static-libstdc++ -static-libgcc -lrt\" CACHE STRIN
           LibUV
         )
 
-        find_program(STRIP_EXECUTABLE strip)
-        if(STRIP_EXECUTABLE)
-
-          set(cmake_executable "${CMakeProject_BINARY_DIR}/bin/cmake")
-          set(cpack_executable "${CMakeProject_BINARY_DIR}/bin/cpack")
-          set(ctest_executable "${CMakeProject_BINARY_DIR}/bin/ctest")
-
-          ExternalProject_Add_Step(CMakeProject-build strip_executables
-            DEPENDEES build
-            COMMENT "Stripping CMake executables"
-            COMMAND ${STRIP_EXECUTABLE} ${cmake_executable}
-            COMMAND ${STRIP_EXECUTABLE} ${cpack_executable}
-            COMMAND ${STRIP_EXECUTABLE} ${ctest_executable}
-            )
-        endif()
     else()
       cpd_ExternalProject_Add_Empty(CMakeProject-build "CMakeProject-src-download")
     endif()
