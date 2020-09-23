@@ -188,7 +188,12 @@ if(CMakePythonDistributions_SUPERBUILD)
         # cache file.
         file(WRITE "${CMAKE_BINARY_DIR}/initial-cache.txt"
 "set(CMAKE_C_FLAGS \"-g3 -D_POSIX_C_SOURCE=199506L -D_POSIX_SOURCE=1 -D_SVID_SOURCE=1 -D_BSD_SOURCE=1\" CACHE STRING \"Initial cache\" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS \"-lstdc++ -lgcc -lrt\" CACHE STRING \"Initial cache\" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS \"-lstdc++ -lgcc -lrt -L/tmp/openssl-install/lib -l:libssl.a -l:libcrypto.a\" CACHE STRING \"Initial cache\" FORCE)
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+set(OPENSSL_ROOT_DIR "/tmp/openssl-install"
+find_package(OpenSSL REQUIRED)
+target_link_linbraries(${PROJECT_NAME} OpenSSL::Crypto)
+target_link_linbraries(${PROJECT_NAME} OpenSSL::SSL)
 ")
         set(_common_args
           CMAKE_ARGS -C "${CMAKE_BINARY_DIR}/initial-cache.txt"
