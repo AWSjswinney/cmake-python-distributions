@@ -18,10 +18,19 @@ matrix:
       env:
         - PYTHON_VERSION=2.7.15
 
+    - os: linux
+      language: generic
+      arch: arm64-graviton2
+      env:
+        - PYTHON_VERSION=3.8.5
+
 before_cache:
   # Cleanup to avoid the cache to grow indefinitely as new package versions are released
   # see https://stackoverflow.com/questions/39930171/cache-brew-builds-with-travis-ci
-  - brew cleanup
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        brew cleanup
+    fi
 
 cache:
   directories:
@@ -44,6 +53,11 @@ before_install:
       brew install gettext
     fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir $HOME/bin; ln -s $(which pip2) $HOME/bin/pip; ln -s $(which python2) $HOME/bin/python; fi
+  - |
+    if [[ "$TRAVIS_OS_NAME' == 'linux" ]]; then
+        docker run -t --rm -v $(pwd):/io quay.io/pypa/manylinux2014_aarch64 /io/scripts/docker-build.sh
+        exit
+    fi
   - python scripts/ssl-check.py
   - python -m pip install --disable-pip-version-check --upgrade pip
   - pip install -U scikit-ci scikit-ci-addons
