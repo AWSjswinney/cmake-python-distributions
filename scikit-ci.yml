@@ -83,16 +83,13 @@ build:
                   sdist=(glob.glob("dist/*.tar.gz") + glob.glob("dist/*.zip"))[0]
                   print("Deleting [%s]" % sdist)
                   os.remove(sdist)
-
-  circle:
-    commands:
-      - |
-        # Since there are no external shared libraries to bundle into the wheels
-        # this step will fixup the wheel switching from 'linux' to 'manylinux' tag
-        for whl in dist/*linux_${arch}.whl; do
-            auditwheel repair --plat ${AUDITWHEEL_PLAT} $whl -w ./dist/
-            rm $whl
-        done
+    - |
+      # Since there are no external shared libraries to bundle into the wheels
+      # this step will fixup the wheel switching from 'linux' to 'manylinux' tag
+      for whl in dist/*linux_$(arch).whl; do
+          auditwheel repair --plat ${AUDITWHEEL_PLAT} $whl -w ./dist/
+          rm $whl
+      done
 
 test:
   commands:
